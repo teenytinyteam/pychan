@@ -99,7 +99,7 @@ class Chan:
     @staticmethod
     def _get_pivots(df):
         df = pd.DataFrame({
-            'entry': df.index.values[::2],
+            'datetime': df.index.values[::2],
             'exit': df.index.values[1::2],
             'entry_high': df['high'].values[::2],
             'exit_high': df['high'].values[1::2],
@@ -112,16 +112,19 @@ class Chan:
         })
         df['high'] = df['entry_high'].fillna(df['exit_high'])
         df['low'] = df['entry_low'].fillna(df['exit_low'])
-        return df[['entry', 'exit', 'high', 'low', 'entry_macd', 'exit_macd', 'trend', 'divergence']]
+        df.set_index('datetime', inplace=True)
+        return df[['exit', 'high', 'low', 'entry_macd', 'exit_macd', 'trend', 'divergence']]
 
     @staticmethod
     def _get_trends(df):
-        return pd.DataFrame({
-            'entry': df.index.values[::2],
+        df = pd.DataFrame({
+            'datetime': df.index.values[::2],
             'exit': df.index.values[1::2],
             'entry_price': df['price'].values[::2],
             'exit_price': df['price'].values[1::2]
         })
+        df.set_index('datetime', inplace=True)
+        return df[['exit', 'entry_price', 'exit_price']]
 
     @staticmethod
     def _get_signals(df):
